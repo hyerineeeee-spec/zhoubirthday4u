@@ -1,0 +1,1048 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🐧 새우가 전하는 생일 축하 🐧</title>
+<link href="https://fonts.googleapis.com/css2?family=Gaegu:wght@300;400;700&family=Jua&display=swap" rel="stylesheet">
+<style>
+:root{
+  --pink:#FF85A1;--peach:#FFB5C2;--mint:#B5EAD7;
+  --yellow:#FFE566;--bg:#F7F5F0;--deep-pink:#FF4D80;
+  --gray-dark:#a8a8a8;--gray-mid:#8e8e8e;--gray-belly:#c0c0c0;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Gaegu',cursive;background:var(--bg);overflow-x:hidden;}
+
+#confetti-canvas{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:999;}
+#fireworks-canvas{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:997;}
+.bg-floats{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;overflow:hidden;}
+.bg-float{position:absolute;font-size:1.8rem;opacity:.12;animation:floatUp linear infinite;}
+@keyframes floatUp{0%{transform:translateY(110vh) rotate(0);opacity:.12}100%{transform:translateY(-10vh) rotate(360deg);opacity:0}}
+
+/* SOUND TOGGLE */
+#sound-toggle{position:fixed;top:18px;right:20px;z-index:1000;background:rgba(255,255,255,.15);backdrop-filter:blur(12px);border:2px solid rgba(255,133,161,.5);border-radius:50px;padding:8px 16px;font-family:'Jua',sans-serif;font-size:.95rem;color:white;cursor:pointer;display:flex;align-items:center;gap:8px;box-shadow:0 4px 16px rgba(0,0,0,.25);transition:all .3s;text-shadow:0 1px 4px rgba(0,0,0,.4);}
+#sound-toggle:hover{transform:scale(1.07);}
+#sound-toggle .t-icon{font-size:1.2rem;}
+#sound-toggle .t-bar{width:34px;height:18px;background:rgba(255,255,255,.25);border-radius:9px;position:relative;transition:background .3s;}
+#sound-toggle.on .t-bar{background:var(--pink);}
+#sound-toggle .t-knob{position:absolute;top:2px;left:2px;width:14px;height:14px;border-radius:50%;background:white;transition:transform .3s;box-shadow:0 1px 4px rgba(0,0,0,.2);}
+#sound-toggle.on .t-knob{transform:translateX(16px);}
+
+/* PENGUIN */
+.saewoo{display:inline-block;filter:drop-shadow(0 12px 24px rgba(0,0,0,.18));transition:transform .3s;}
+.saewoo:hover{transform:scale(1.08) rotate(-3deg);}
+.saewoo-bounce{animation:sbounce 2s ease-in-out infinite;}
+@keyframes sbounce{0%,100%{transform:translateY(0) rotate(0)}30%{transform:translateY(-20px) rotate(-4deg)}60%{transform:translateY(-10px) rotate(3deg)}}
+.saewoo-wiggle{animation:wiggle .6s ease-in-out infinite alternate;}
+@keyframes wiggle{from{transform:rotate(-5deg)}to{transform:rotate(5deg)}}
+
+/* SPEECH BUBBLE */
+.sb{position:relative;background:white;border-radius:20px;padding:14px 22px;font-size:1.2rem;color:#444;box-shadow:0 6px 20px rgba(0,0,0,.1);border:2.5px solid var(--peach);max-width:340px;text-align:center;animation:sbpop .5s cubic-bezier(.36,.07,.19,.97) both;}
+.sb::after{content:'';position:absolute;bottom:-14px;left:50%;transform:translateX(-50%);border:7px solid transparent;border-top-color:white;}
+.sb.left::after{left:30px;transform:none;}
+@keyframes sbpop{0%{transform:scale(.5);opacity:0}80%{transform:scale(1.05)}100%{transform:scale(1);opacity:1}}
+
+/* SECTIONS */
+section{position:relative;z-index:3;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:60px 20px;}
+
+/* HERO */
+#hero{background:linear-gradient(160deg,#2c2c2c 0%,#3d3d3d 35%,#f7f0e8 100%);text-align:center;overflow:hidden;}
+.hero-title{font-family:'Jua',sans-serif;font-size:clamp(2.6rem,8vw,5rem);color:white;text-shadow:3px 3px 0 rgba(255,133,161,.6);margin:20px 0 8px;animation:titlePop .8s cubic-bezier(.36,.07,.19,.97) both;}
+@keyframes titlePop{0%{transform:scale(.3) rotate(-5deg);opacity:0}80%{transform:scale(1.1) rotate(2deg)}100%{transform:scale(1);opacity:1}}
+.hero-sub{font-size:1.7rem;color:var(--peach);margin-bottom:10px;}
+.date-badge{display:inline-block;background:linear-gradient(135deg,var(--pink),var(--deep-pink));color:white;padding:10px 28px;border-radius:50px;font-size:1.3rem;font-family:'Jua',sans-serif;box-shadow:0 8px 25px rgba(255,77,128,.35);margin:14px 0 30px;}
+.scroll-hint{font-size:1.1rem;color:var(--peach);opacity:.8;animation:bounce 2s infinite;}
+@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(8px)}}
+
+/* COUNTDOWN */
+#countdown{background:linear-gradient(135deg,#2a2a2a,#3a3a3a);text-align:center;}
+.sec-title{font-family:'Jua',sans-serif;font-size:clamp(1.8rem,5vw,3rem);color:white;margin-bottom:30px;position:relative;display:inline-block;}
+.sec-title::after{content:'';position:absolute;bottom:-8px;left:50%;transform:translateX(-50%);width:80%;height:4px;background:linear-gradient(90deg,transparent,var(--pink),transparent);border-radius:2px;}
+.cd-grid{display:flex;gap:16px;flex-wrap:wrap;justify-content:center;margin-bottom:30px;}
+.cd-box{background:rgba(255,255,255,.08);backdrop-filter:blur(10px);border-radius:20px;padding:24px 28px;min-width:110px;box-shadow:0 8px 24px rgba(0,0,0,.3);border:2px solid rgba(255,133,161,.3);transition:transform .3s;}
+.cd-box:hover{transform:translateY(-8px) rotate(-2deg);}
+.cd-num{font-family:'Jua',sans-serif;font-size:3rem;color:var(--pink);display:block;line-height:1;}
+.cd-lbl{font-size:1rem;color:var(--peach);margin-top:4px;}
+.cd-comment{margin-top:10px;font-size:1.25rem;color:#ccc;font-style:italic;min-height:2rem;}
+.bday-msg{font-family:'Jua',sans-serif;font-size:2.2rem;color:var(--yellow);display:none;animation:pulse 1s infinite;}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
+
+/* PHOTOS */
+#photos{background:linear-gradient(135deg,#f7f0e8,#fff5f7);}
+.upload-zone{border:3px dashed var(--pink);border-radius:24px;padding:45px 30px;text-align:center;background:white;cursor:pointer;transition:all .3s;margin-bottom:24px;max-width:700px;width:100%;}
+.upload-zone:hover{background:#FFF5F7;border-color:var(--deep-pink);transform:scale(1.02);}
+.upload-zone input{display:none;}
+.upload-icon{font-size:3.5rem;display:block;margin-bottom:10px;}
+.upload-text{font-size:1.35rem;color:var(--pink);}
+.upload-hint{font-size:.95rem;color:#bbb;margin-top:6px;}
+.photo-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:14px;width:100%;max-width:700px;}
+.photo-item{position:relative;border-radius:18px;overflow:hidden;aspect-ratio:1;box-shadow:0 8px 24px rgba(0,0,0,.12);border:4px solid white;transition:transform .3s;animation:popIn .5s cubic-bezier(.36,.07,.19,.97) both;}
+.photo-item:hover{transform:scale(1.05) rotate(2deg);}
+.photo-item img{width:100%;height:100%;object-fit:cover;}
+.photo-item .rm{position:absolute;top:6px;right:6px;background:rgba(255,77,128,.9);color:white;border:none;border-radius:50%;width:26px;height:26px;font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .2s;}
+.photo-item:hover .rm{opacity:1;}
+@keyframes popIn{0%{transform:scale(0) rotate(-10deg);opacity:0}80%{transform:scale(1.1) rotate(3deg)}100%{transform:scale(1);opacity:1}}
+
+/* LETTER */
+#letter{background:linear-gradient(135deg,#fffbec,#fff0f5);}
+.letter-scene{display:flex;align-items:flex-start;gap:20px;flex-wrap:wrap;justify-content:center;width:100%;max-width:720px;}
+.letter-card{background:white;border-radius:28px;padding:44px;flex:1;min-width:280px;box-shadow:0 20px 60px rgba(255,133,161,.15);border:3px solid #FFE4EC;position:relative;overflow:hidden;}
+.letter-card::after{content:'';position:absolute;bottom:0;left:0;width:100%;height:5px;background:linear-gradient(90deg,var(--pink),#c7ceea,var(--mint),var(--yellow));}
+.letter-to{font-size:1.4rem;color:var(--pink);margin-bottom:16px;}
+.letter-body{font-size:1.25rem;line-height:2.2;color:#555;white-space:pre-line;}
+.letter-ta{width:100%;min-height:190px;border:2px solid var(--peach);border-radius:14px;padding:14px;font-family:'Gaegu',cursive;font-size:1.2rem;line-height:2;color:#555;resize:vertical;outline:none;display:none;}
+.letter-ta:focus{border-color:var(--pink);}
+.letter-btn{margin-top:20px;background:linear-gradient(135deg,var(--pink),var(--deep-pink));color:white;border:none;padding:11px 26px;border-radius:50px;font-family:'Gaegu',cursive;font-size:1.15rem;cursor:pointer;box-shadow:0 6px 20px rgba(255,77,128,.3);transition:all .3s;}
+.letter-btn:hover{transform:translateY(-3px);}
+
+/* MUSIC */
+#music-section{background:linear-gradient(135deg,#2a2a2a,#3a3a3a);text-align:center;}
+.music-player{background:rgba(255,255,255,.07);backdrop-filter:blur(10px);border-radius:28px;padding:40px;max-width:380px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.3);border:2px solid rgba(255,133,161,.25);text-align:center;}
+.music-art{width:130px;height:130px;margin:0 auto 20px;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.05);border-radius:50%;}
+.music-art.spinning{animation:spin 3s linear infinite;}
+@keyframes spin{from{transform:rotate(0)}to{transform:rotate(360deg)}}
+.music-title{font-family:'Jua',sans-serif;font-size:1.5rem;color:white;margin-bottom:4px;}
+.music-sub{font-size:1.1rem;color:var(--peach);margin-bottom:22px;}
+.music-btn{background:linear-gradient(135deg,var(--pink),var(--deep-pink));color:white;border:none;width:62px;height:62px;border-radius:50%;font-size:1.6rem;cursor:pointer;box-shadow:0 8px 24px rgba(255,77,128,.4);transition:all .3s;display:inline-flex;align-items:center;justify-content:center;}
+.music-btn:hover{transform:scale(1.12);}
+.sound-note{font-size:.95rem;color:#888;margin-top:14px;line-height:1.6;}
+
+/* WISHES */
+#wishes{background:linear-gradient(135deg,#f0f5ff,#fff0f5);text-align:center;}
+.wish-wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:center;max-width:680px;}
+.wish{background:white;border-radius:18px;padding:14px 22px;font-size:1.15rem;color:#555;box-shadow:0 6px 20px rgba(0,0,0,.08);border:2.5px solid;animation:floatB ease-in-out infinite alternate;transition:transform .3s;}
+.wish:hover{transform:scale(1.06) rotate(2deg);}
+@keyframes floatB{from{transform:translateY(0)}to{transform:translateY(-10px)}}
+
+/* GIFTS */
+#gifts{background:linear-gradient(135deg,#fff8f0,#f0f0ff);}
+.gifts-intro{display:flex;align-items:center;gap:16px;margin-bottom:36px;flex-wrap:wrap;justify-content:center;}
+.gifts-grid{display:flex;gap:28px;row-gap:90px;flex-wrap:wrap;justify-content:center;max-width:800px;width:100%;}
+.gift-card{width:160px;cursor:pointer;display:flex;flex-direction:column;align-items:center;position:relative;transition:transform .2s;user-select:none;z-index:1;}
+.gift-card.open{z-index:10;}
+.gift-card:hover .gift-box-wrap{transform:translateY(-6px) scale(1.04);}
+.gift-box-wrap{width:140px;height:140px;position:relative;transition:transform .3s cubic-bezier(.36,.07,.19,.97);}
+.gift-base{position:absolute;bottom:0;left:0;right:0;height:90px;border-radius:0 0 16px 16px;display:flex;align-items:center;justify-content:center;font-size:2.2rem;overflow:hidden;}
+.gift-lid{position:absolute;top:0;left:-4px;right:-4px;height:48px;border-radius:12px 12px 0 0;display:flex;align-items:center;justify-content:center;transition:transform .45s cubic-bezier(.36,.07,.19,.97),opacity .3s;transform-origin:bottom center;z-index:2;}
+.gift-ribbon-v{position:absolute;top:0;left:50%;transform:translateX(-50%);width:14px;height:100%;border-radius:4px;z-index:3;opacity:.85;}
+.gift-ribbon-h{position:absolute;top:14px;left:0;right:0;height:14px;border-radius:4px;z-index:3;opacity:.85;}
+.gift-bow{position:absolute;top:-12px;left:50%;transform:translateX(-50%);font-size:1.6rem;z-index:4;transition:opacity .2s,transform .3s;}
+.gift-card.open .gift-lid{transform:translateY(-54px) rotate(-25deg);opacity:0;}
+.gift-card.open .gift-bow{transform:translateX(-50%) translateY(-50px);opacity:0;}
+.gift-photo{position:absolute;top:0;left:50%;transform:translateX(-50%) translateY(0) scale(0);width:110px;height:110px;border-radius:50%;background:#eee;border:4px solid white;box-shadow:0 8px 28px rgba(0,0,0,.22);overflow:hidden;z-index:5;transition:transform .5s cubic-bezier(.36,.07,.19,.97);display:flex;align-items:center;justify-content:center;font-size:3rem;}
+.gift-photo img{width:100%;height:100%;object-fit:cover;}
+.gift-card.open .gift-photo{transform:translateX(-50%) translateY(-90px) scale(1);}
+.gift-label{font-size:1rem;color:#666;margin-top:10px;text-align:center;font-family:'Jua',sans-serif;transition:color .3s;}
+.gift-card.open .gift-label{color:var(--deep-pink);}
+
+/* GUESTBOOK */
+#guestbook{background:linear-gradient(135deg,#fff5fb,#f5f0ff);}
+.gb-form{display:flex;flex-direction:column;gap:12px;width:100%;max-width:520px;margin-bottom:32px;}
+.gb-input,.gb-textarea{border:2px solid var(--peach);border-radius:14px;padding:12px 18px;font-family:'Gaegu',cursive;font-size:1.15rem;outline:none;transition:border-color .3s;background:white;}
+.gb-input:focus,.gb-textarea:focus{border-color:var(--pink);}
+.gb-textarea{resize:none;height:100px;}
+.gb-btn{background:linear-gradient(135deg,var(--pink),var(--deep-pink));color:white;border:none;padding:13px;border-radius:50px;font-family:'Jua',sans-serif;font-size:1.2rem;cursor:pointer;box-shadow:0 6px 20px rgba(255,77,128,.3);transition:all .3s;}
+.gb-btn:hover{transform:translateY(-3px) scale(1.02);}
+.gb-list{display:flex;flex-direction:column;gap:14px;width:100%;max-width:520px;}
+.gb-card{background:white;border-radius:20px;padding:18px 22px;box-shadow:0 6px 20px rgba(255,133,161,.12);border:2px solid var(--peach);animation:popIn .4s cubic-bezier(.36,.07,.19,.97) both;}
+.gb-name{font-family:'Jua',sans-serif;font-size:1.1rem;color:var(--deep-pink);margin-bottom:6px;}
+.gb-text{font-size:1.1rem;color:#555;line-height:1.7;white-space:pre-wrap;}
+.gb-time{font-size:.85rem;color:#ccc;margin-top:8px;}
+.gb-empty{font-size:1.15rem;color:#bbb;text-align:center;padding:20px;}
+
+/* FINALE */
+#finale{background:linear-gradient(160deg,#2c2c2c 0%,#3d3d3d 40%,#f7f0e8 100%);text-align:center;overflow:hidden;}
+.finale-title{font-family:'Jua',sans-serif;font-size:clamp(2.5rem,7vw,4.8rem);background:linear-gradient(135deg,var(--yellow),var(--pink),#c7ceea);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:14px;background-size:200%;animation:shimmer 3s ease infinite;}
+@keyframes shimmer{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+.finale-sub{font-size:1.6rem;color:var(--peach);margin-bottom:28px;}
+.celebrate-btn{background:linear-gradient(135deg,var(--deep-pink),var(--pink));color:white;border:none;padding:18px 44px;border-radius:50px;font-family:'Jua',sans-serif;font-size:1.45rem;cursor:pointer;box-shadow:0 10px 30px rgba(255,77,128,.45);transition:all .3s;animation:pulse 2s infinite;}
+.celebrate-btn:hover{transform:scale(1.08) translateY(-4px);}
+
+/* LOCK OVERLAY */
+.lock-overlay{position:absolute;inset:0;z-index:20;background:rgba(255,248,252,.6);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;transition:opacity .8s ease;pointer-events:auto;}
+.lock-overlay.unlocked{opacity:0;pointer-events:none;}
+.lock-icon{font-size:4rem;animation:lockShake 3s ease-in-out infinite;filter:drop-shadow(0 6px 12px rgba(255,77,128,.3));}
+@keyframes lockShake{0%,85%,100%{transform:rotate(0) scale(1)}88%{transform:rotate(-8deg) scale(1.1)}91%{transform:rotate(8deg) scale(1.1)}94%{transform:rotate(-5deg)}97%{transform:rotate(5deg)}}
+.lock-msg{font-family:'Jua',sans-serif;font-size:1.3rem;color:var(--deep-pink);text-align:center;line-height:1.8;}
+.lock-sub{font-size:1rem;color:#999;text-align:center;}
+.lock-overlay.unlock-anim .lock-icon{animation:unlockPop .7s cubic-bezier(.36,.07,.19,.97) forwards;}
+@keyframes unlockPop{0%{transform:scale(1) rotate(0)}30%{transform:scale(1.5) rotate(-15deg)}60%{transform:scale(.6) rotate(20deg)}100%{transform:scale(0);opacity:0}}
+
+/* NAV */
+.nav-dots{position:fixed;right:18px;top:50%;transform:translateY(-50%);z-index:999;display:flex;flex-direction:column;gap:10px;}
+.nav-dot{width:12px;height:12px;border-radius:50%;background:rgba(255,255,255,.4);cursor:pointer;transition:all .3s;border:2px solid rgba(255,255,255,.6);box-shadow:0 2px 8px rgba(0,0,0,.2);}
+.nav-dot.active{background:var(--pink);transform:scale(1.4);}
+
+.gb-admin-login-btn{background:transparent;color:#ccc;border:1.5px solid #ddd;padding:8px 18px;border-radius:50px;font-family:'Gaegu',cursive;font-size:.95rem;cursor:pointer;transition:all .3s;margin-top:4px;}
+.gb-admin-login-btn:hover{color:var(--pink);border-color:var(--pink);}
+.gb-admin-btns{display:flex;gap:8px;margin-top:10px;}
+.gb-edit-btn,.gb-del-btn{border:none;padding:6px 14px;border-radius:50px;font-family:'Gaegu',cursive;font-size:.95rem;cursor:pointer;transition:all .3s;}
+.gb-edit-btn{background:#fff0f5;color:var(--pink);border:1.5px solid var(--peach);}
+.gb-edit-btn:hover{background:var(--peach);color:white;}
+.gb-del-btn{background:#fff5f5;color:#e88;border:1.5px solid #fcc;}
+.gb-del-btn:hover{background:#ffcccc;color:#c00;}
+.gb-admin-bar{background:linear-gradient(135deg,#fff0f8,#f8f0ff);border:2px solid var(--peach);border-radius:16px;padding:12px 18px;display:flex;align-items:center;font-family:'Jua',sans-serif;font-size:1rem;color:var(--deep-pink);margin-bottom:4px;}
+.gb-logout-btn{background:transparent;border:1.5px solid var(--pink);color:var(--pink);padding:4px 14px;border-radius:50px;font-family:'Gaegu',cursive;font-size:.9rem;cursor:pointer;margin-left:auto;}
+.gb-logout-btn:hover{background:var(--pink);color:white;}
+
+/* SECRET TOGGLE */
+#secret-toggle{display:flex;align-items:center;gap:8px;margin:0 auto;padding:8px 16px;width:fit-content;cursor:pointer;opacity:.12;transition:opacity .3s;user-select:none;border-radius:50px;}
+#secret-toggle:hover{opacity:.65;}
+#secret-toggle .st-label{font-family:'Gaegu',cursive;font-size:.8rem;color:#888;}
+#secret-toggle .st-bar{width:28px;height:14px;background:#ccc;border-radius:7px;position:relative;transition:background .3s;}
+#secret-toggle.preview .st-bar{background:var(--pink);}
+#secret-toggle .st-knob{position:absolute;top:2px;left:2px;width:10px;height:10px;border-radius:50%;background:white;transition:transform .3s;}
+#secret-toggle.preview .st-knob{transform:translateX(14px);}
+
+.reveal{opacity:0;transform:translateY(40px);transition:opacity .8s ease,transform .8s ease;}
+.reveal.visible{opacity:1;transform:translateY(0);}
+@media(max-width:600px){.letter-card{padding:28px 20px;}.cd-box{min-width:85px;padding:18px 14px;}.cd-num{font-size:2.4rem;}.gift-card{width:130px;}.gift-box-wrap{width:120px;height:120px;}}
+</style>
+</head>
+<body>
+<canvas id="confetti-canvas"></canvas>
+<canvas id="fireworks-canvas"></canvas>
+<div class="bg-floats" id="bgFloats"></div>
+
+<button id="sound-toggle" class="on" onclick="toggleSound()">
+  <span class="t-icon">🔊</span>
+  <span id="t-label" style="font-size:.9rem">소리 ON</span>
+  <div class="t-bar"><div class="t-knob"></div></div>
+</button>
+
+<nav class="nav-dots">
+  <div class="nav-dot active" onclick="gotoSec(0)"></div>
+  <div class="nav-dot" onclick="gotoSec(1)"></div>
+  <div class="nav-dot" onclick="gotoSec(2)"></div>
+  <div class="nav-dot" onclick="gotoSec(3)"></div>
+  <div class="nav-dot" onclick="gotoSec(4)"></div>
+  <div class="nav-dot" onclick="gotoSec(5)"></div>
+  <div class="nav-dot" onclick="gotoSec(6)"></div>
+  <div class="nav-dot" onclick="gotoSec(7)"></div>
+  <div class="nav-dot" onclick="gotoSec(8)"></div>
+  <div class="nav-dot" onclick="gotoSec(9)"></div>
+</nav>
+
+<!-- ===== HERO ===== -->
+<section id="hero">
+  <div style="display:flex;flex-direction:column;align-items:center;gap:16px">
+    <div class="sb">형아!! 나야 나!! 새우!!<br>오늘 진짜 엄청 중요한 날이야!! 🐧</div>
+    <svg class="saewoo saewoo-bounce" width="180" height="215" viewBox="0 0 180 215" fill="none">
+      <polygon points="90,4 66,56 114,56" fill="#FF85A1"/>
+      <polygon points="90,4 80,30 100,30" fill="#FFE566" opacity=".85"/>
+      <circle cx="90" cy="4" r="5" fill="#FFE566"/>
+      <rect x="64" y="54" width="52" height="5" rx="2.5" fill="#FF85A1" opacity=".7"/>
+      <ellipse cx="90" cy="138" rx="68" ry="72" fill="#a8a8a8"/>
+      <ellipse cx="90" cy="150" rx="43" ry="53" fill="#c0c0c0"/>
+      <ellipse cx="31" cy="142" rx="18" ry="36" fill="#8e8e8e" transform="rotate(-12,31,142)"/>
+      <ellipse cx="149" cy="142" rx="18" ry="36" fill="#8e8e8e" transform="rotate(12,149,142)"/>
+      <ellipse cx="90" cy="110" rx="44" ry="42" fill="#ffffff"/>
+      <circle cx="73" cy="102" r="5" fill="#1a1a1a"/>
+      <circle cx="107" cy="102" r="5" fill="#1a1a1a"/>
+      <ellipse cx="90" cy="116" rx="9" ry="7" fill="#c8956c"/>
+      <ellipse cx="90" cy="114" rx="6" ry="4" fill="#d4a574" opacity=".5"/>
+      <ellipse cx="62" cy="114" rx="9" ry="6" fill="#FFB5C2" opacity=".4"/>
+      <ellipse cx="118" cy="114" rx="9" ry="6" fill="#FFB5C2" opacity=".4"/>
+      <ellipse cx="70" cy="206" rx="20" ry="9" fill="#c8956c"/>
+      <ellipse cx="110" cy="206" rx="20" ry="9" fill="#c8956c"/>
+      <circle cx="155" cy="76" r="16" fill="#FF85A1" opacity=".9"/>
+      <line x1="155" y1="92" x2="149" y2="132" stroke="#FF85A1" stroke-width="1.5"/>
+      <circle cx="170" cy="61" r="13" fill="#FFE566" opacity=".9"/>
+      <line x1="170" y1="74" x2="155" y2="132" stroke="#FFE566" stroke-width="1.5"/>
+    </svg>
+  </div>
+  <h1 class="hero-title">생일 축하해요<br>주동인! 🎉</h1>
+  <p class="hero-sub">새우가 엄청 열심히 준비했어!! 💕</p>
+  <div class="date-badge">🗓️ 2026년 4월 2일</div>
+  <p class="scroll-hint">형아 새우랑 같이 내려가봐 ↓</p>
+</section>
+
+<!-- ===== COUNTDOWN ===== -->
+<section id="countdown">
+  <h2 class="sec-title reveal">🐧 새우의 카운트다운</h2>
+  <div class="reveal" style="display:flex;align-items:flex-end;gap:24px;margin-bottom:30px;flex-wrap:wrap;justify-content:center">
+    <svg class="saewoo saewoo-wiggle" width="90" height="110" viewBox="0 0 180 215" fill="none">
+      <ellipse cx="90" cy="138" rx="68" ry="72" fill="#a8a8a8"/>
+      <ellipse cx="90" cy="150" rx="43" ry="53" fill="#c0c0c0"/>
+      <ellipse cx="31" cy="142" rx="18" ry="36" fill="#8e8e8e" transform="rotate(-12,31,142)"/>
+      <ellipse cx="149" cy="142" rx="18" ry="36" fill="#8e8e8e" transform="rotate(12,149,142)"/>
+      <ellipse cx="90" cy="110" rx="44" ry="42" fill="#ffffff"/>
+      <circle cx="73" cy="102" r="5" fill="#1a1a1a"/>
+      <circle cx="107" cy="102" r="5" fill="#1a1a1a"/>
+      <ellipse cx="90" cy="116" rx="9" ry="7" fill="#c8956c"/>
+      <ellipse cx="62" cy="114" rx="9" ry="6" fill="#FFB5C2" opacity=".4"/>
+      <ellipse cx="118" cy="114" rx="9" ry="6" fill="#FFB5C2" opacity=".4"/>
+      <ellipse cx="70" cy="206" rx="20" ry="9" fill="#c8956c"/>
+      <ellipse cx="110" cy="206" rx="20" ry="9" fill="#c8956c"/>
+    </svg>
+    <div class="cd-grid">
+      <div class="cd-box"><span class="cd-num" id="days">--</span><div class="cd-lbl">일 ☀️</div></div>
+      <div class="cd-box"><span class="cd-num" id="hours">--</span><div class="cd-lbl">시간 🌙</div></div>
+      <div class="cd-box"><span class="cd-num" id="minutes">--</span><div class="cd-lbl">분 ⏰</div></div>
+      <div class="cd-box"><span class="cd-num" id="seconds">--</span><div class="cd-lbl">초 💫</div></div>
+    </div>
+  </div>
+  <p class="cd-comment reveal" id="cdComment">형아 생일 언제야? 새우 발가락으로 세는 중... 🐧</p>
+  <p class="bday-msg" id="bdayMsg">🎂 형아 오늘이야!!! 새우 너무 신나서 넘어질 것 같아!!! 🐧💕</p>
+</section>
+
+<!-- ===== PHOTOS ===== -->
+<section id="photos" style="position:relative">
+  <div class="lock-overlay" id="lockPhotos">
+    <span class="lock-icon">🔒</span>
+    <p class="lock-msg">사진도 생일날 공개!!<br>새우가 숨겨뒀어!! 🐧📸</p>
+    <p class="lock-sub">카운트다운이 끝나면 공개돼요</p>
+  </div>
+  <h2 class="sec-title reveal" style="color:#3d3d3d">📸 형아 사진 보여줘!!</h2>
+  <div class="reveal" style="text-align:center;margin-bottom:20px">
+    <div class="sb" style="display:inline-block">형아!! 사진 올려줘!!<br>새우가 24시간 감상할게!! 👀🐧</div>
+  </div>
+  <div class="upload-zone reveal" onclick="document.getElementById('photoInput').click()">
+    <input type="file" id="photoInput" accept="image/*" multiple onchange="handlePhotos(this)">
+    <span class="upload-icon">📷</span>
+    <p class="upload-text">사진을 여기에 올려줘!</p>
+    <p class="upload-hint">클릭하거나 드래그해봐 🌸</p>
+  </div>
+  <div class="photo-grid" id="photoGrid"></div>
+</section>
+
+<!-- ===== LETTER ===== -->
+<section id="letter" style="position:relative">
+  <div class="lock-overlay" id="lockLetter">
+    <span class="lock-icon">🔒</span>
+    <p class="lock-msg">새우가 꽁꽁 잠궈뒀어!!<br>생일날 되면 열릴거야!! 🐧</p>
+    <p class="lock-sub">카운트다운이 끝나면 공개돼요 💌</p>
+  </div>
+  <h2 class="sec-title reveal" style="color:#3d3d3d">💌 새우가 전해주는 편지</h2>
+  <div class="letter-scene reveal">
+    <div style="display:flex;flex-direction:column;align-items:center;gap:14px">
+      <div class="sb left">형아한테 편지 쓰다가<br>눈물 나서 종이가 다 젖었어... 🥹🐧</div>
+      <svg class="saewoo" width="100" height="120" viewBox="0 0 180 215" fill="none">
+        <ellipse cx="90" cy="138" rx="68" ry="72" fill="#a8a8a8"/>
+        <ellipse cx="90" cy="150" rx="43" ry="53" fill="#c0c0c0"/>
+        <ellipse cx="31" cy="142" rx="18" ry="36" fill="#8e8e8e" transform="rotate(-12,31,142)"/>
+        <ellipse cx="149" cy="142" rx="18" ry="36" fill="#8e8e8e" transform="rotate(12,149,142)"/>
+        <ellipse cx="90" cy="110" rx="44" ry="42" fill="#ffffff"/>
+        <circle cx="73" cy="102" r="5" fill="#1a1a1a"/>
+        <circle cx="107" cy="102" r="5" fill="#1a1a1a"/>
+        <ellipse cx="90" cy="116" rx="9" ry="7" fill="#c8956c"/>
+        <ellipse cx="62" cy="114" rx="9" ry="6" fill="#FFB5C2" opacity=".4"/>
+        <ellipse cx="118" cy="114" rx="9" ry="6" fill="#FFB5C2" opacity=".4"/>
+        <ellipse cx="70" cy="206" rx="20" ry="9" fill="#c8956c"/>
+        <ellipse cx="110" cy="206" rx="20" ry="9" fill="#c8956c"/>
+        <rect x="96" y="150" width="50" height="38" rx="5" fill="white" stroke="#FFB5C2" stroke-width="2"/>
+        <line x1="101" y1="160" x2="139" y2="160" stroke="#FFB5C2" stroke-width="1.5"/>
+        <line x1="101" y1="167" x2="139" y2="167" stroke="#FFB5C2" stroke-width="1.5"/>
+        <line x1="101" y1="174" x2="126" y2="174" stroke="#FFB5C2" stroke-width="1.5"/>
+      </svg>
+    </div>
+    <div class="letter-card">
+      <p class="letter-to">주동인에게. 🌸</p>
+      <div class="letter-body" id="letterBody">생일 진심으로 축하해! 🎉
+
+오늘 이 날이 얼마나 특별한지 알아?
+네가 태어난 날이잖아 🥹
+
+매일 네 곁에 있어서 나는 정말 행복해.
+앞으로도 항상 함께 행복한 날들만 가득하길 바라 💕
+
+사랑해 🎂✨
+
+  — 새우도 (형아 최고야) 🐧</div>
+      <textarea class="letter-ta" id="letterTa"></textarea>
+      <button class="letter-btn" id="editBtn" onclick="toggleEdit()" style="margin-top:20px">✏️ 편지 직접 쓰기</button>
+    </div>
+  </div>
+</section>
+
+<!-- ===== MUSIC ===== -->
+<section id="music-section" style="position:relative">
+  <div class="lock-overlay" id="lockMusic">
+    <span class="lock-icon">🔒</span>
+    <p class="lock-msg" style="color:white">새우 노래도 생일날 들려줄게!!<br>아직 비밀이야!! 🐧🎵</p>
+    <p class="lock-sub">카운트다운이 끝나면 공개돼요</p>
+  </div>
+  <h2 class="sec-title reveal">🎵 새우의 생일 노래</h2>
+  <div class="music-player reveal">
+    <div class="music-art" id="musicArt">
+      <svg width="90" height="110" viewBox="0 0 180 215" fill="none">
+        <ellipse cx="90" cy="138" rx="68" ry="72" fill="#a8a8a8"/>
+        <ellipse cx="90" cy="150" rx="43" ry="53" fill="#c0c0c0"/>
+        <ellipse cx="31" cy="142" rx="18" ry="36" fill="#8e8e8e" transform="rotate(-12,31,142)"/>
+        <ellipse cx="149" cy="142" rx="18" ry="36" fill="#8e8e8e" transform="rotate(12,149,142)"/>
+        <ellipse cx="90" cy="110" rx="44" ry="42" fill="#ffffff"/>
+        <circle cx="73" cy="102" r="5" fill="#1a1a1a"/>
+        <circle cx="107" cy="102" r="5" fill="#1a1a1a"/>
+        <ellipse cx="90" cy="116" rx="9" ry="7" fill="#c8956c"/>
+        <ellipse cx="62" cy="114" rx="9" ry="6" fill="#FFB5C2" opacity=".4"/>
+        <ellipse cx="118" cy="114" rx="9" ry="6" fill="#FFB5C2" opacity=".4"/>
+        <ellipse cx="70" cy="206" rx="20" ry="9" fill="#c8956c"/>
+        <ellipse cx="110" cy="206" rx="20" ry="9" fill="#c8956c"/>
+      </svg>
+    </div>
+    <p class="music-title">형아 생일 축하해요 🎂</p>
+    <p class="music-sub">새우가 목 아프게 불러줄게 🐧🎶</p>
+    <button class="music-btn" id="musicBtn" onclick="toggleMusic()">▶</button>
+    <p class="sound-note">🔊 우측 상단 토글로 소리 켜봐!<br>새우가 열심히 노래 부르는 중 🎶</p>
+  </div>
+</section>
+
+<!-- ===== WISHES ===== -->
+<section id="wishes" style="position:relative">
+  <div class="lock-overlay" id="lockWishes">
+    <span class="lock-icon">🔒</span>
+    <p class="lock-msg">소원도 생일날 공개!!<br>새우가 적어뒀어!! 🐧🌟</p>
+    <p class="lock-sub">카운트다운이 끝나면 공개돼요</p>
+  </div>
+  <h2 class="sec-title reveal" style="color:#3d3d3d">🌟 새우의 소원 목록</h2>
+  <div class="reveal" style="margin-bottom:20px">
+    <div class="sb">형아한테 소원 빌어봤어!!<br>새우 소원이 제일 잘 들어맞거든!! (아마도) 🐧</div>
+  </div>
+  <div class="wish-wrap reveal">
+    <div class="wish" style="border-color:#FFB5C2;animation-duration:3s">💪 형아 항상 건강하길!! (새우도 건강함 참고로)</div>
+    <div class="wish" style="border-color:#B5EAD7;animation-duration:2.5s;animation-delay:.3s">😊 매일 웃는 날만!! 슬픈 날은 새우한테 줘!!</div>
+    <div class="wish" style="border-color:#FFE566;animation-duration:3.5s;animation-delay:.6s">✨ 하는 일 다 잘 되길!! 새우가 빌어줄게!!</div>
+    <div class="wish" style="border-color:#C7CEEA;animation-duration:2.8s;animation-delay:.9s">💕 형아 오래오래 행복하길!!!</div>
+    <div class="wish" style="border-color:#FFB5C2;animation-duration:3.2s;animation-delay:1.2s">🐧 형아랑 새우 영원히 함께!!</div>
+    <div class="wish" style="border-color:#B5EAD7;animation-duration:2.6s;animation-delay:1.5s">🎂 케이크 제일 큰 거 먹기!! (새우 한 입만 줘)</div>
+    <div class="wish" style="border-color:#FFE566;animation-duration:3.8s;animation-delay:.4s">🌈 세상 제일 행복한 사람 되기!!</div>
+    <div class="wish" style="border-color:#C7CEEA;animation-duration:3s;animation-delay:.8s">🥰 형아는 원래 최고야!! 앞으로도!!</div>
+  </div>
+</section>
+
+<!-- ===== GIFTS ===== -->
+<section id="gifts" style="position:relative">
+  <div class="lock-overlay" id="lockGifts">
+    <span class="lock-icon">🔒</span>
+    <p class="lock-msg">선물은 생일날 줄게!!<br>새우가 꽁꽁 지키고 있어!! 🐧🎁</p>
+    <p class="lock-sub">카운트다운이 끝나면 공개돼요 🎀</p>
+  </div>
+  <h2 class="sec-title reveal" style="color:#3d3d3d">🎁 새우가 준비한 선물</h2>
+  <div class="gifts-intro reveal">
+    <div class="sb" style="display:inline-block;max-width:400px">
+      형아!! 새우가 몇 달 동안 숨겨뒀던 선물이야!!<br>
+      살짝 터치해봐... 두근두근 🐧💝
+    </div>
+  </div>
+  <div class="gifts-grid reveal" id="giftsGrid"></div>
+</section>
+
+<!-- ===== GUESTBOOK ===== -->
+<section id="guestbook" style="position:relative">
+  <div class="lock-overlay" id="lockGuestbook">
+    <span class="lock-icon">🔒</span>
+    <p class="lock-msg">친구들 메시지도 생일날 공개!!<br>🐧💌</p>
+    <p class="lock-sub">카운트다운이 끝나면 공개돼요</p>
+  </div>
+  <h2 class="sec-title reveal" style="color:#3d3d3d">💬 친구들의 축하 메시지</h2>
+  <div class="reveal" style="margin-bottom:24px">
+    <div class="sb" style="display:inline-block;max-width:400px">
+      형아 친구들도 축하 메시지 남겨줘!!<br>새우가 전달해줄게!! 🐧💌
+    </div>
+  </div>
+  <div class="gb-form reveal">
+    <input class="gb-input" id="gbName" type="text" placeholder="이름 (예: 홍길동 🐧)" maxlength="20">
+    <textarea class="gb-textarea" id="gbMsg" placeholder="주동인에게 축하 메시지를 남겨줘!! 🎉" maxlength="200"></textarea>
+    <button class="gb-btn" onclick="addGbMsg()">💌 메시지 남기기</button>
+    <button class="gb-admin-login-btn" id="adminLoginBtn" onclick="adminLogin()">🔐 관리자</button>
+  </div>
+  <div class="gb-list" id="gbList"></div>
+
+  <!-- 수정 모달 -->
+  <div id="gbEditModal" style="display:none;position:fixed;inset:0;z-index:500;background:rgba(0,0,0,.5);align-items:center;justify-content:center;">
+    <div style="background:white;border-radius:24px;padding:32px;width:90%;max-width:420px;box-shadow:0 20px 60px rgba(0,0,0,.2);">
+      <p style="font-family:'Jua',sans-serif;font-size:1.3rem;color:var(--deep-pink);margin-bottom:16px">✏️ 메시지 수정</p>
+      <textarea id="gbEditText" style="width:100%;height:120px;border:2px solid var(--peach);border-radius:14px;padding:12px;font-family:'Gaegu',cursive;font-size:1.1rem;outline:none;resize:none;"></textarea>
+      <div style="display:flex;gap:10px;margin-top:14px;">
+        <button onclick="submitEdit()" style="flex:1;background:linear-gradient(135deg,var(--pink),var(--deep-pink));color:white;border:none;padding:12px;border-radius:50px;font-family:'Jua',sans-serif;font-size:1.1rem;cursor:pointer;">💾 저장</button>
+        <button onclick="closeEditModal()" style="flex:1;background:#eee;color:#666;border:none;padding:12px;border-radius:50px;font-family:'Jua',sans-serif;font-size:1.1rem;cursor:pointer;">취소</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== FINALE ===== -->
+<section id="finale" style="position:relative">
+  <div class="lock-overlay" id="lockFinale">
+    <span class="lock-icon">🔒</span>
+    <p class="lock-msg" style="color:white">마지막 깜짝 이벤트!!<br>생일날 확인해!! 🐧🎊</p>
+    <p class="lock-sub">카운트다운이 끝나면 공개돼요</p>
+  </div>
+  <div class="sb reveal" style="margin-bottom:20px;font-size:1.3rem">
+    형아!!!! 생일 진심으로 축하해!!!!🎉<br>
+    형아가 태어나서 진짜 다행이야!! 🐧💕<br>
+    <small style="color:#aaa;font-size:.85rem">(새우가 직접 쓴 말임 진심임)</small>
+  </div>
+  <svg class="saewoo saewoo-bounce reveal" width="160" height="195" viewBox="0 0 180 215" fill="none">
+    <polygon points="90,4 66,56 114,56" fill="#FFE566"/>
+    <polygon points="90,4 80,30 100,30" fill="#FF85A1" opacity=".8"/>
+    <circle cx="90" cy="4" r="5" fill="#FF85A1"/>
+    <rect x="64" y="54" width="52" height="5" rx="2.5" fill="#FFE566" opacity=".7"/>
+    <ellipse cx="90" cy="138" rx="68" ry="72" fill="#a8a8a8"/>
+    <ellipse cx="90" cy="150" rx="43" ry="53" fill="#c0c0c0"/>
+    <ellipse cx="31" cy="142" rx="18" ry="36" fill="#8e8e8e" transform="rotate(-12,31,142)"/>
+    <ellipse cx="149" cy="142" rx="18" ry="36" fill="#8e8e8e" transform="rotate(12,149,142)"/>
+    <ellipse cx="90" cy="110" rx="44" ry="42" fill="#ffffff"/>
+    <circle cx="73" cy="102" r="5" fill="#1a1a1a"/>
+    <circle cx="107" cy="102" r="5" fill="#1a1a1a"/>
+    <ellipse cx="90" cy="116" rx="9" ry="7" fill="#c8956c"/>
+    <ellipse cx="62" cy="114" rx="9" ry="6" fill="#FFB5C2" opacity=".4"/>
+    <ellipse cx="118" cy="114" rx="9" ry="6" fill="#FFB5C2" opacity=".4"/>
+    <ellipse cx="70" cy="206" rx="20" ry="9" fill="#c8956c"/>
+    <ellipse cx="110" cy="206" rx="20" ry="9" fill="#c8956c"/>
+    <circle cx="38" cy="82" r="14" fill="#FF85A1" opacity=".9"/>
+    <line x1="38" y1="96" x2="33" y2="132" stroke="#FF85A1" stroke-width="1.5"/>
+    <circle cx="22" cy="67" r="11" fill="#FFE566" opacity=".9"/>
+    <line x1="22" y1="78" x2="33" y2="132" stroke="#FFE566" stroke-width="1.5"/>
+    <circle cx="152" cy="76" r="14" fill="#B5EAD7" opacity=".9"/>
+    <line x1="152" y1="90" x2="148" y2="132" stroke="#B5EAD7" stroke-width="1.5"/>
+  </svg>
+  <h2 class="finale-title reveal">사랑해, 주동인!</h2>
+  <p class="finale-sub reveal">새우가 항상 곁에 있을게 💖</p>
+  <button class="celebrate-btn reveal" onclick="bigCelebrate()">🎊 새우랑 같이 폭죽!!</button>
+</section>
+
+<!-- 비밀 토글 — 페이지 맨 하단 -->
+<div style="padding:48px 0 20px;text-align:center">
+  <div id="secret-toggle" onclick="togglePreview()">
+    <span style="font-size:.85rem">🔒</span>
+    <div class="st-bar"><div class="st-knob"></div></div>
+    <span class="st-label" id="stLabel">···</span>
+  </div>
+</div>
+
+<script>
+(function(){
+
+/* ── BG FLOATS ── */
+var floatEmojis=['🐧','🌸','💕','⭐','✨','🎊','🎈','💖','🌟','🎂','❄️','🐟'];
+var bgEl=document.getElementById('bgFloats');
+for(var i=0;i<16;i++){
+  var e=document.createElement('div');
+  e.className='bg-float';
+  e.textContent=floatEmojis[Math.floor(Math.random()*floatEmojis.length)];
+  e.style.left=Math.random()*100+'%';
+  e.style.animationDuration=(9+Math.random()*12)+'s';
+  e.style.animationDelay=(Math.random()*10)+'s';
+  e.style.fontSize=(1.2+Math.random()*1.8)+'rem';
+  bgEl.appendChild(e);
+}
+
+/* ── LOCK ── */
+var LOCK_IDS=['lockPhotos','lockLetter','lockMusic','lockWishes','lockGifts','lockGuestbook','lockFinale'];
+var previewMode=false;
+
+function lockAll(){
+  LOCK_IDS.forEach(function(id){
+    var el=document.getElementById(id);
+    if(!el)return;
+    el.classList.remove('unlock-anim','unlocked');
+  });
+  var t=document.getElementById('secret-toggle');
+  t.classList.remove('preview');
+  document.getElementById('stLabel').textContent='···';
+}
+
+function unlockAll(){
+  LOCK_IDS.forEach(function(id){
+    var el=document.getElementById(id);
+    if(!el||el.classList.contains('unlocked'))return;
+    el.classList.add('unlock-anim');
+    setTimeout((function(el){ return function(){ el.classList.add('unlocked'); }; })(el), 900);
+  });
+  var t=document.getElementById('secret-toggle');
+  t.classList.add('preview');
+  document.getElementById('stLabel').textContent='미리보기';
+}
+
+// on load: check real date
+var realDiff=new Date('2026-04-02T00:00:00')-new Date();
+if(realDiff<=0){ previewMode=true; unlockAll(); }
+else { lockAll(); }
+
+window.togglePreview=function(){
+  previewMode=!previewMode;
+  if(previewMode){
+    unlockAll();
+    // show birthday state
+    document.querySelectorAll('.cd-box').forEach(function(b){b.style.display='none';});
+    document.getElementById('bdayMsg').style.display='block';
+    document.getElementById('cdComment').style.display='none';
+    bigCelebrate();
+  } else {
+    lockAll();
+    // restore countdown
+    document.querySelectorAll('.cd-box').forEach(function(b){b.style.display='';});
+    document.getElementById('bdayMsg').style.display='none';
+    document.getElementById('cdComment').style.display='';
+    updateCountdown();
+  }
+};
+
+/* ── COUNTDOWN ── */
+var cdComments=['형아 생일 언제야? 새우 발가락으로 세는 중... 🐧','형아 아직 멀었어!! 새우 기다리다 녹을 것 같아 ❄️','이제 좀 가까워졌어!! 새우 너무 설레!! 🎉','형아 거의 다 왔어!! 새우 밥도 못 먹겠어!! 🎊','형아 내일이야!!! 새우 밤새 기다릴게!!! 🌙','형아 오늘이야!!!! 새우 너무 신나서 넘어질 것 같아!!!! 🎂'];
+
+function updateCountdown(){
+  if(previewMode)return;
+  var diff=new Date('2026-04-02T00:00:00')-new Date();
+  if(diff<=0){
+    document.querySelectorAll('.cd-box').forEach(function(b){b.style.display='none';});
+    document.getElementById('bdayMsg').style.display='block';
+    document.getElementById('cdComment').style.display='none';
+    previewMode=true; unlockAll(); bigCelebrate(); return;
+  }
+  var d=Math.floor(diff/864e5),h=Math.floor(diff%864e5/36e5),m=Math.floor(diff%36e5/6e4),s=Math.floor(diff%6e4/1e3);
+  document.getElementById('days').textContent=String(d).padStart(2,'0');
+  document.getElementById('hours').textContent=String(h).padStart(2,'0');
+  document.getElementById('minutes').textContent=String(m).padStart(2,'0');
+  document.getElementById('seconds').textContent=String(s).padStart(2,'0');
+  var idx=d===0?5:d<=1?4:d<=3?3:d<=7?2:d<=30?1:0;
+  document.getElementById('cdComment').textContent=cdComments[idx];
+}
+updateCountdown();
+setInterval(updateCountdown,1000);
+
+/* ── PHOTOS ── */
+window.handlePhotos=function(inp){
+  var grid=document.getElementById('photoGrid');
+  Array.from(inp.files).forEach(function(f){
+    var r=new FileReader();
+    r.onload=function(e){
+      var it=document.createElement('div');
+      it.className='photo-item';
+      var img=document.createElement('img');
+      img.src=e.target.result; img.alt='사진';
+      var btn=document.createElement('button');
+      btn.className='rm'; btn.textContent='×';
+      btn.onclick=function(){ it.remove(); };
+      it.appendChild(img); it.appendChild(btn);
+      grid.appendChild(it);
+    };
+    r.readAsDataURL(f);
+  });
+};
+var uz=document.querySelector('.upload-zone');
+uz.addEventListener('dragover',function(e){e.preventDefault();uz.style.borderColor='#FF4D80';});
+uz.addEventListener('dragleave',function(){uz.style.borderColor='';});
+uz.addEventListener('drop',function(e){e.preventDefault();uz.style.borderColor='';window.handlePhotos({files:e.dataTransfer.files});});
+
+/* ── LETTER ── */
+var editing=false;
+window.toggleEdit=function(){
+  var c=document.getElementById('letterBody'),t=document.getElementById('letterTa'),b=document.getElementById('editBtn');
+  if(!editing){t.value=c.textContent;c.style.display='none';t.style.display='block';b.textContent='💾 저장하기';editing=true;}
+  else{c.textContent=t.value;t.style.display='none';c.style.display='block';b.textContent='✏️ 편지 수정하기';editing=false;}
+};
+
+/* ── GIFTS ── */
+var giftData=[
+  {label:'아지르 🏜️',emoji:'⚔️',boxColor:'#c9a44a',lidColor:'#a07830',ribbonColor:'#e8c060',photoEmoji:'🏜️'},
+  {label:'메지로맥퀸 🌸',emoji:'🌸',boxColor:'#b98fd4',lidColor:'#8a5fa8',ribbonColor:'#d4a8f0',photoEmoji:'🌸'},
+  {label:'블랙핑크 로제 🌹',emoji:'🎤',boxColor:'#e07090',lidColor:'#b84060',ribbonColor:'#f8a0b8',photoEmoji:'🌹'},
+  {label:'쌍용 렉스턴 🚗',emoji:'🚙',boxColor:'#4a7ab5',lidColor:'#2d5880',ribbonColor:'#80b0e0',photoEmoji:'🚗'}
+];
+var openGiftIdx=-1;
+
+function buildGifts(){
+  var grid=document.getElementById('giftsGrid');
+  giftData.forEach(function(g,i){
+    var card=document.createElement('div');
+    card.className='gift-card';
+    card.id='gift-'+i;
+
+    var wrap=document.createElement('div');
+    wrap.className='gift-box-wrap';
+
+    var photo=document.createElement('div');
+    photo.className='gift-photo';
+    photo.textContent=g.photoEmoji;
+
+    var lid=document.createElement('div');
+    lid.className='gift-lid';
+    lid.style.background=g.lidColor;
+    var rh=document.createElement('div');
+    rh.className='gift-ribbon-h';
+    rh.style.background=g.ribbonColor;
+    lid.appendChild(rh);
+
+    var bow=document.createElement('div');
+    bow.className='gift-bow';
+    bow.textContent='🎀';
+
+    var base=document.createElement('div');
+    base.className='gift-base';
+    base.style.background=g.boxColor;
+    var emoji=document.createElement('span');
+    emoji.textContent=g.emoji;
+    var rv=document.createElement('div');
+    rv.className='gift-ribbon-v';
+    rv.style.background=g.ribbonColor;
+    base.appendChild(emoji);
+    base.appendChild(rv);
+
+    wrap.appendChild(photo);
+    wrap.appendChild(lid);
+    wrap.appendChild(bow);
+    wrap.appendChild(base);
+
+    var lbl=document.createElement('div');
+    lbl.className='gift-label';
+    lbl.textContent=g.label;
+
+    card.appendChild(wrap);
+    card.appendChild(lbl);
+    card.addEventListener('click',function(idx){ return function(){ toggleGift(idx); }; }(i));
+    grid.appendChild(card);
+  });
+}
+buildGifts();
+
+window.toggleGift=function(idx){
+  if(openGiftIdx!==-1&&openGiftIdx!==idx){
+    document.getElementById('gift-'+openGiftIdx).classList.remove('open');
+  }
+  var card=document.getElementById('gift-'+idx);
+  if(openGiftIdx===idx){ card.classList.remove('open'); openGiftIdx=-1; }
+  else { card.classList.add('open'); openGiftIdx=idx; }
+};
+
+/* ── AUDIO (seamless loop) ── */
+var actx=null,mGain=null,isPlaying=false,muted=false;
+var loopNextTime=0;
+var scheduleAF=null;
+var LOOKAHEAD=0.4; // 초 단위 미리보기
+
+var bdNotes=[
+  {f:261.6,d:.32},{f:261.6,d:.16},{f:293.7,d:.48},{f:261.6,d:.48},{f:349.2,d:.48},{f:329.6,d:.96},
+  {f:261.6,d:.32},{f:261.6,d:.16},{f:293.7,d:.48},{f:261.6,d:.48},{f:392.0,d:.48},{f:349.2,d:.96},
+  {f:261.6,d:.32},{f:261.6,d:.16},{f:523.3,d:.48},{f:440.0,d:.48},{f:349.2,d:.48},{f:329.6,d:.48},{f:293.7,d:.96},
+  {f:466.2,d:.32},{f:466.2,d:.16},{f:440.0,d:.48},{f:349.2,d:.48},{f:392.0,d:.48},{f:349.2,d:.96}
+];
+var MELODY_DUR=bdNotes.reduce(function(a,n){return a+n.d;},0);
+
+function playNote(freq,startT,dur){
+  if(!actx)return;
+  try{
+    var osc=actx.createOscillator(),osc2=actx.createOscillator(),vib=actx.createOscillator();
+    var vg=actx.createGain(),g=actx.createGain(),g2=actx.createGain();
+    osc.type='triangle'; osc2.type='sine'; vib.type='sine';
+    osc.frequency.value=freq; osc2.frequency.value=freq*2.005;
+    vib.frequency.value=5.8; vg.gain.value=freq*.013;
+    vib.connect(vg); vg.connect(osc.frequency);
+    var gv=muted?0:.22;
+    g.gain.setValueAtTime(0,startT);
+    g.gain.linearRampToValueAtTime(gv,startT+.04);
+    g.gain.setValueAtTime(gv*.85,startT+dur*.75);
+    g.gain.linearRampToValueAtTime(0,startT+dur-.03);
+    g2.gain.value=.06;
+    osc.connect(g); osc2.connect(g2); g2.connect(g); g.connect(mGain);
+    osc.start(startT); osc.stop(startT+dur);
+    osc2.start(startT); osc2.stop(startT+dur);
+    vib.start(startT); vib.stop(startT+dur);
+  }catch(e){}
+}
+
+function scheduleMelody(fromTime){
+  var t=fromTime;
+  bdNotes.forEach(function(n){playNote(n.f,t,n.d*.93);t+=n.d;});
+  return fromTime+MELODY_DUR;
+}
+
+function scheduleLoop(){
+  if(!isPlaying||!actx)return;
+  // actx가 아직 running 상태가 아니면 잠시 후 재시도
+  if(actx.state!=='running'){
+    scheduleAF=setTimeout(scheduleLoop,100);
+    return;
+  }
+  var now=actx.currentTime;
+  // loopNextTime이 현재보다 뒤처졌으면 재설정 (탭 비활성 후 복귀 등)
+  if(loopNextTime<now) loopNextTime=now+0.05;
+  // 미리보기 범위 안에 다음 루프가 없으면 예약
+  if(loopNextTime<now+LOOKAHEAD){
+    loopNextTime=scheduleMelody(loopNextTime);
+  }
+  scheduleAF=setTimeout(scheduleLoop,200); // 200ms마다 체크 (충분함)
+}
+
+function startMusic(){
+  if(isPlaying)return;
+  if(!actx){
+    actx=new(window.AudioContext||window.webkitAudioContext)();
+    mGain=actx.createGain();
+    mGain.gain.value=muted?0:.8;
+    mGain.connect(actx.destination);
+  }
+  var resume=actx.state==='suspended'?actx.resume():Promise.resolve();
+  resume.then(function(){
+    isPlaying=true;
+    loopNextTime=actx.currentTime+0.1;
+    scheduleLoop();
+    document.getElementById('musicBtn').textContent='⏸';
+    document.getElementById('musicArt').classList.add('spinning');
+  });
+}
+
+function stopMusic(){
+  isPlaying=false;
+  clearTimeout(scheduleAF);
+  if(mGain&&actx&&actx.state==='running'){
+    mGain.gain.setTargetAtTime(0,actx.currentTime,.05);
+  }
+  document.getElementById('musicBtn').textContent='▶';
+  document.getElementById('musicArt').classList.remove('spinning');
+}
+
+window.toggleMusic=function(){if(isPlaying)stopMusic();else startMusic();};
+
+window.toggleSound=function(){
+  muted=!muted;
+  var btn=document.getElementById('sound-toggle'),lbl=document.getElementById('t-label');
+  if(muted){
+    btn.classList.remove('on');btn.querySelector('.t-icon').textContent='🔇';lbl.textContent='소리 OFF';
+    if(mGain&&actx&&actx.state==='running')mGain.gain.setTargetAtTime(0,actx.currentTime,.1);
+  } else {
+    btn.classList.add('on');btn.querySelector('.t-icon').textContent='🔊';lbl.textContent='소리 ON';
+    if(mGain&&actx&&actx.state==='running')mGain.gain.setTargetAtTime(.8,actx.currentTime,.1);
+    if(!isPlaying)startMusic();
+  }
+};
+
+var autoStarted=false;
+function tryAutoStart(){if(autoStarted)return;autoStarted=true;startMusic();}
+['click','touchstart','keydown','scroll'].forEach(function(ev){document.addEventListener(ev,tryAutoStart,{once:true,passive:true});});
+setTimeout(function(){try{if(!autoStarted){autoStarted=true;startMusic();}}catch(e){}},400);
+
+/* ── CONFETTI ── */
+var cCv=document.getElementById('confetti-canvas'),cCtx=cCv.getContext('2d');
+var cPieces=[],cFrame;
+function resizeC(){cCv.width=window.innerWidth;cCv.height=window.innerHeight;}
+resizeC();window.addEventListener('resize',resizeC);
+var cColors=['#FF85A1','#FFB5C2','#B5EAD7','#FFE566','#C7CEEA','#FF4D80','#e0dbd0'];
+var cEmojis=['🐧','🌸','💕','⭐','🎊','❄️'];
+function spawnC(n){
+  for(var i=0;i<n;i++) cPieces.push({x:Math.random()*cCv.width,y:-20-Math.random()*200,vx:(Math.random()-.5)*4,vy:2+Math.random()*4,rot:Math.random()*360,vr:(Math.random()-.5)*8,size:8+Math.random()*10,color:cColors[Math.floor(Math.random()*cColors.length)],shape:Math.random()>.7?'emoji':'rect',emoji:cEmojis[Math.floor(Math.random()*cEmojis.length)]});
+}
+function drawC(){
+  cCtx.clearRect(0,0,cCv.width,cCv.height);
+  cPieces=cPieces.filter(function(p){return p.y<cCv.height+30;});
+  cPieces.forEach(function(p){
+    p.x+=p.vx;p.y+=p.vy;p.rot+=p.vr;p.vy+=.05;
+    cCtx.save();cCtx.translate(p.x,p.y);cCtx.rotate(p.rot*Math.PI/180);
+    if(p.shape==='emoji'){cCtx.font=p.size*1.5+'px serif';cCtx.textAlign='center';cCtx.textBaseline='middle';cCtx.fillText(p.emoji,0,0);}
+    else{cCtx.fillStyle=p.color;cCtx.globalAlpha=.85;cCtx.fillRect(-p.size/2,-p.size/3,p.size,p.size*.6);}
+    cCtx.restore();
+  });
+  if(cPieces.length>0)cFrame=requestAnimationFrame(drawC);
+  else cCtx.clearRect(0,0,cCv.width,cCv.height);
+}
+
+/* ── FIREWORKS ── */
+var fwCv=document.getElementById('fireworks-canvas'),fwCtx=fwCv.getContext('2d');
+var fwP=[],fwAF,fwRunning=false,fwInt=null;
+function resizeFW(){fwCv.width=window.innerWidth;fwCv.height=window.innerHeight;}
+resizeFW();window.addEventListener('resize',resizeFW);
+var fwColors=['#FF85A1','#FFE566','#B5EAD7','#C7CEEA','#FF4D80','#ffffff','#FFB5C2','#a8edea','#ffd700'];
+
+function createFW(x,y,color){
+  var n=60+Math.floor(Math.random()*40);
+  for(var i=0;i<n;i++){
+    var a=(Math.PI*2/n)*i+(Math.random()-.5)*.5,sp=3+Math.random()*6;
+    fwP.push({x:x,y:y,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp,life:1,decay:.011+Math.random()*.016,size:3+Math.random()*4,color:color,trail:[]});
+  }
+}
+
+function launchFW(){
+  var w=fwCv.width,h=fwCv.height;
+  [[w*.15,h*.2],[w*.85,h*.18],[w*.5,h*.1],[w*.3,h*.35],[w*.7,h*.3],[w*.5,h*.25],[w*.1,h*.4],[w*.9,h*.38]].forEach(function(pt,i){
+    setTimeout(function(px,py){ return function(){ createFW(px,py,fwColors[Math.floor(Math.random()*fwColors.length)]); }; }(pt[0],pt[1]),i*140);
+  });
+}
+
+function drawFW(){
+  fwCtx.clearRect(0,0,fwCv.width,fwCv.height);
+  fwP=fwP.filter(function(p){return p.life>0;});
+  fwP.forEach(function(p){
+    p.trail.push({x:p.x,y:p.y,life:p.life});
+    if(p.trail.length>10)p.trail.shift();
+    p.x+=p.vx;p.y+=p.vy;p.vy+=.055;p.vx*=.97;p.vy*=.97;p.life-=p.decay;
+    p.trail.forEach(function(tr,ti){
+      var r=Math.max(0.1,p.size*(ti/p.trail.length)*.6);
+      fwCtx.beginPath();fwCtx.arc(tr.x,tr.y,r,0,Math.PI*2);
+      fwCtx.fillStyle=p.color;fwCtx.globalAlpha=(ti/p.trail.length)*p.life*.5;fwCtx.fill();
+    });
+    fwCtx.beginPath();fwCtx.arc(p.x,p.y,Math.max(0.1,p.size*p.life),0,Math.PI*2);
+    fwCtx.fillStyle=p.color;fwCtx.globalAlpha=Math.min(1,p.life);fwCtx.fill();
+    fwCtx.globalAlpha=1;
+  });
+  if(fwRunning||fwP.length>0)fwAF=requestAnimationFrame(drawFW);
+  else fwCtx.clearRect(0,0,fwCv.width,fwCv.height);
+}
+
+function bigCelebrate(){
+  cancelAnimationFrame(cFrame);cPieces=[];
+  for(var i=0;i<6;i++) (function(i){setTimeout(function(){spawnC(70);},i*300);})(i);
+  drawC();
+  cancelAnimationFrame(fwAF);fwP=[];fwCtx.clearRect(0,0,fwCv.width,fwCv.height);
+  clearInterval(fwInt);fwRunning=true;
+  var bursts=0;
+  launchFW();
+  fwInt=setInterval(function(){
+    bursts++;launchFW();
+    if(bursts>=5){fwRunning=false;clearInterval(fwInt);}
+  },800);
+  drawFW();
+}
+window.bigCelebrate=bigCelebrate;
+
+setTimeout(function(){spawnC(40);drawC();},900);
+
+/* ── SCROLL REVEAL ── */
+var revObs=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting)e.target.classList.add('visible');});},{threshold:.1});
+document.querySelectorAll('.reveal').forEach(function(r){revObs.observe(r);});
+
+/* ── NAV DOTS ── */
+var allSecs=document.querySelectorAll('section'),allDots=document.querySelectorAll('.nav-dot');
+window.gotoSec=function(i){allSecs[i].scrollIntoView({behavior:'smooth'});};
+var secObs=new IntersectionObserver(function(es){
+  es.forEach(function(e){
+    if(e.isIntersecting){
+      var i=Array.from(allSecs).indexOf(e.target);
+      allDots.forEach(function(d){d.classList.remove('active');});
+      if(allDots[i])allDots[i].classList.add('active');
+    }
+  });
+},{threshold:.4});
+allSecs.forEach(function(s){secObs.observe(s);});
+
+/* ── GUESTBOOK ── */
+var GB_KEY='saewoo_gb_v1';
+var ADMIN_PW='0907';
+var gbMessages=[];
+var isAdmin=false;
+var editingIdx=-1;
+
+try{var raw=localStorage.getItem(GB_KEY);gbMessages=raw?JSON.parse(raw):[];}catch(e){gbMessages=[];}
+
+function saveGb(){try{localStorage.setItem(GB_KEY,JSON.stringify(gbMessages));}catch(e){}}
+
+function updateAdminBtn(){
+  var btn=document.getElementById('adminLoginBtn');
+  if(!btn)return;
+  if(isAdmin){btn.textContent='🔓 관리자 ON';btn.style.color='var(--deep-pink)';btn.style.borderColor='var(--pink)';}
+  else{btn.textContent='🔐 관리자';btn.style.color='';btn.style.borderColor='';}
+}
+
+function renderGb(){
+  var list=document.getElementById('gbList');
+  if(!list)return;
+  list.innerHTML='';
+
+  // 관리자 상태 표시바
+  if(isAdmin){
+    var bar=document.createElement('div');bar.className='gb-admin-bar';
+    bar.textContent='🔐 관리자 모드 — 메시지를 수정하거나 삭제할 수 있어요';
+    list.appendChild(bar);
+  }
+
+  if(gbMessages.length===0){
+    var empty=document.createElement('p');
+    empty.className='gb-empty';
+    empty.textContent='아직 메시지가 없어!! 첫 번째로 남겨줘 🐧💌';
+    list.appendChild(empty);
+    return;
+  }
+
+  for(var i=gbMessages.length-1;i>=0;i--){
+    (function(realIdx){
+      var m=gbMessages[realIdx];
+      var card=document.createElement('div');card.className='gb-card';
+
+      var name=document.createElement('div');name.className='gb-name';name.textContent='🐧 '+m.name;
+      var text=document.createElement('div');text.className='gb-text';text.textContent=m.text;
+      var time=document.createElement('div');time.className='gb-time';time.textContent=m.time;
+      card.appendChild(name);card.appendChild(text);card.appendChild(time);
+
+      if(isAdmin){
+        var btns=document.createElement('div');btns.className='gb-admin-btns';
+        var editBtn=document.createElement('button');editBtn.className='gb-edit-btn';editBtn.textContent='✏️ 수정';
+        editBtn.onclick=function(){startEdit(realIdx,m);};
+        var delBtn=document.createElement('button');delBtn.className='gb-del-btn';delBtn.textContent='🗑️ 삭제';
+        delBtn.onclick=function(){deleteMsg(realIdx);};
+        btns.appendChild(editBtn);btns.appendChild(delBtn);
+        card.appendChild(btns);
+      }
+      list.appendChild(card);
+    })(i);
+  }
+}
+renderGb();
+
+function startEdit(idx,m){
+  editingIdx=idx;
+  document.getElementById('gbEditText').value=m.text;
+  document.getElementById('gbEditModal').style.display='flex';
+}
+
+function deleteMsg(idx){
+  gbMessages.splice(idx,1);
+  saveGb();renderGb();
+}
+
+window.submitEdit=function(){
+  var newText=document.getElementById('gbEditText').value.trim();
+  if(!newText)return;
+  if(editingIdx>=0&&editingIdx<gbMessages.length){
+    gbMessages[editingIdx].text=newText;
+    saveGb();renderGb();
+  }
+  window.closeEditModal();
+};
+
+window.closeEditModal=function(){
+  document.getElementById('gbEditModal').style.display='none';
+  editingIdx=-1;
+};
+
+// 관리자 버튼: 토글 로그아웃만 담당
+window.adminLogin=function(){
+  if(isAdmin){isAdmin=false;editingIdx=-1;renderGb();updateAdminBtn();}
+  else{
+    // 관리자 버튼 클릭시 이름 입력란에 힌트 표시
+    var nameEl=document.getElementById('gbName');
+    nameEl.placeholder='이름에 비밀번호 입력 후 메시지 남기기 🔐';
+    nameEl.focus();
+  }
+};
+
+window.addGbMsg=function(){
+  var nameEl=document.getElementById('gbName'),msgEl=document.getElementById('gbMsg');
+  var name=nameEl.value.trim(),text=msgEl.value.trim();
+
+  // 관리자 인증: 이름에 비밀번호 입력 시
+  if(name===ADMIN_PW){
+    isAdmin=!isAdmin;
+    nameEl.value='';
+    nameEl.placeholder='이름 (예: 홍길동 🐧)';
+    renderGb();updateAdminBtn();
+    return;
+  }
+
+  if(!name){nameEl.focus();nameEl.style.borderColor='var(--deep-pink)';return;}
+  if(!text){msgEl.focus();msgEl.style.borderColor='var(--deep-pink)';return;}
+  nameEl.style.borderColor='';msgEl.style.borderColor='';
+
+  var now=new Date();
+  var time=now.getFullYear()+'.'+String(now.getMonth()+1).padStart(2,'0')+'.'+String(now.getDate()).padStart(2,'0')+' '+String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0');
+  gbMessages.push({name:name,text:text,time:time});
+  saveGb();renderGb();
+  nameEl.value='';msgEl.value='';
+  nameEl.placeholder='이름 (예: 홍길동 🐧)';
+  spawnC(30);drawC();
+};
+
+})();
+</script>
+</body>
+</html>
