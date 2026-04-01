@@ -311,18 +311,18 @@ section{position:relative;z-index:3;min-height:100vh;display:flex;flex-direction
       </svg>
     </div>
     <div class="letter-card">
-      <p class="letter-to">주동인에게. 🌸</p>
+      <p class="letter-to">동인이형아에게. 🌸</p>
       <div class="letter-body" id="letterBody">생일 진심으로 축하해! 🎉
 
 오늘 이 날이 얼마나 특별한지 알아?
-네가 태어난 날이잖아 🥹
+형아가 태어난 날이잖아 ✨
 
 매일 네 곁에 있어서 나는 정말 행복해.
 앞으로도 항상 함께 행복한 날들만 가득하길 바라 💕
 
 사랑해 🎂✨
 
-  — 새우도 (형아 최고야) 🐧</div>
+  — 새우가 (형아 최고야) 🐧</div>
       <textarea class="letter-ta" id="letterTa"></textarea>
       <button class="letter-btn" id="editBtn" onclick="toggleEdit()" style="margin-top:20px">✏️ 편지 직접 쓰기</button>
     </div>
@@ -503,7 +503,7 @@ for(var i=0;i<16;i++){
 }
 
 /* ── LOCK ── */
-var LOCK_IDS=['lockPhotos','lockLetter','lockMusic','lockWishes','lockGifts','lockGuestbook','lockFinale'];
+var LOCK_IDS=['lockLetter','lockMusic','lockWishes','lockGifts','lockGuestbook','lockFinale'];
 var previewMode=false;
 
 function lockAll(){
@@ -575,30 +575,6 @@ function updateCountdown(){
 }
 updateCountdown();
 setInterval(updateCountdown,1000);
-
-/* ── PHOTOS ── */
-window.handlePhotos=function(inp){
-  var grid=document.getElementById('photoGrid');
-  Array.from(inp.files).forEach(function(f){
-    var r=new FileReader();
-    r.onload=function(e){
-      var it=document.createElement('div');
-      it.className='photo-item';
-      var img=document.createElement('img');
-      img.src=e.target.result; img.alt='사진';
-      var btn=document.createElement('button');
-      btn.className='rm'; btn.textContent='×';
-      btn.onclick=function(){ it.remove(); };
-      it.appendChild(img); it.appendChild(btn);
-      grid.appendChild(it);
-    };
-    r.readAsDataURL(f);
-  });
-};
-var uz=document.querySelector('.upload-zone');
-uz.addEventListener('dragover',function(e){e.preventDefault();uz.style.borderColor='#FF4D80';});
-uz.addEventListener('dragleave',function(){uz.style.borderColor='';});
-uz.addEventListener('drop',function(e){e.preventDefault();uz.style.borderColor='';window.handlePhotos({files:e.dataTransfer.files});});
 
 /* ── LETTER ── */
 var editing=false;
