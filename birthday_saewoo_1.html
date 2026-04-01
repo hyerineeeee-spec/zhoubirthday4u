@@ -280,26 +280,6 @@ section{position:relative;z-index:3;min-height:100vh;display:flex;flex-direction
   <p class="bday-msg" id="bdayMsg">🎂 형아 오늘이야!!! 새우 너무 신나서 넘어질 것 같아!!! 🐧💕</p>
 </section>
 
-<!-- ===== PHOTOS ===== -->
-<section id="photos" style="position:relative">
-  <div class="lock-overlay" id="lockPhotos">
-    <span class="lock-icon">🔒</span>
-    <p class="lock-msg">사진도 생일날 공개!!<br>새우가 숨겨뒀어!! 🐧📸</p>
-    <p class="lock-sub">카운트다운이 끝나면 공개돼요</p>
-  </div>
-  <h2 class="sec-title reveal" style="color:#3d3d3d">📸 형아 사진 보여줘!!</h2>
-  <div class="reveal" style="text-align:center;margin-bottom:20px">
-    <div class="sb" style="display:inline-block">형아!! 사진 올려줘!!<br>새우가 24시간 감상할게!! 👀🐧</div>
-  </div>
-  <div class="upload-zone reveal" onclick="document.getElementById('photoInput').click()">
-    <input type="file" id="photoInput" accept="image/*" multiple onchange="handlePhotos(this)">
-    <span class="upload-icon">📷</span>
-    <p class="upload-text">사진을 여기에 올려줘!</p>
-    <p class="upload-hint">클릭하거나 드래그해봐 🌸</p>
-  </div>
-  <div class="photo-grid" id="photoGrid"></div>
-</section>
-
 <!-- ===== LETTER ===== -->
 <section id="letter" style="position:relative">
   <div class="lock-overlay" id="lockLetter">
