@@ -68,6 +68,22 @@ section{position:relative;z-index:3;min-height:100vh;display:flex;flex-direction
 .bday-msg{font-family:'Jua',sans-serif;font-size:2.2rem;color:var(--yellow);display:none;animation:pulse 1s infinite;}
 @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
 
+/* PHOTOS */
+#photos{background:linear-gradient(135deg,#f7f0e8,#fff5f7);}
+.upload-zone{border:3px dashed var(--pink);border-radius:24px;padding:45px 30px;text-align:center;background:white;cursor:pointer;transition:all .3s;margin-bottom:24px;max-width:700px;width:100%;}
+.upload-zone:hover{background:#FFF5F7;border-color:var(--deep-pink);transform:scale(1.02);}
+.upload-zone input{display:none;}
+.upload-icon{font-size:3.5rem;display:block;margin-bottom:10px;}
+.upload-text{font-size:1.35rem;color:var(--pink);}
+.upload-hint{font-size:.95rem;color:#bbb;margin-top:6px;}
+.photo-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:14px;width:100%;max-width:700px;}
+.photo-item{position:relative;border-radius:18px;overflow:hidden;aspect-ratio:1;box-shadow:0 8px 24px rgba(0,0,0,.12);border:4px solid white;transition:transform .3s;animation:popIn .5s cubic-bezier(.36,.07,.19,.97) both;}
+.photo-item:hover{transform:scale(1.05) rotate(2deg);}
+.photo-item img{width:100%;height:100%;object-fit:cover;}
+.photo-item .rm{position:absolute;top:6px;right:6px;background:rgba(255,77,128,.9);color:white;border:none;border-radius:50%;width:26px;height:26px;font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .2s;}
+.photo-item:hover .rm{opacity:1;}
+@keyframes popIn{0%{transform:scale(0) rotate(-10deg);opacity:0}80%{transform:scale(1.1) rotate(3deg)}100%{transform:scale(1);opacity:1}}
+
 /* LETTER */
 #letter{background:linear-gradient(135deg,#fffbec,#fff0f5);}
 .letter-scene{display:flex;align-items:flex-start;gap:20px;flex-wrap:wrap;justify-content:center;width:100%;max-width:720px;}
@@ -215,6 +231,7 @@ section{position:relative;z-index:3;min-height:100vh;display:flex;flex-direction
   <div class="nav-dot" onclick="gotoSec(6)"></div>
   <div class="nav-dot" onclick="gotoSec(7)"></div>
   <div class="nav-dot" onclick="gotoSec(8)"></div>
+  <div class="nav-dot" onclick="gotoSec(9)"></div>
 </nav>
 
 <!-- ===== HERO ===== -->
@@ -280,6 +297,26 @@ section{position:relative;z-index:3;min-height:100vh;display:flex;flex-direction
   <p class="bday-msg" id="bdayMsg">🎂 형아 오늘이야!!! 새우 너무 신나서 넘어질 것 같아!!! 🐧💕</p>
 </section>
 
+<!-- ===== PHOTOS ===== -->
+<section id="photos" style="position:relative">
+  <div class="lock-overlay" id="lockPhotos">
+    <span class="lock-icon">🔒</span>
+    <p class="lock-msg">사진도 생일날 공개!!<br>새우가 숨겨뒀어!! 🐧📸</p>
+    <p class="lock-sub">카운트다운이 끝나면 공개돼요</p>
+  </div>
+  <h2 class="sec-title reveal" style="color:#3d3d3d">📸 형아 사진 보여줘!!</h2>
+  <div class="reveal" style="text-align:center;margin-bottom:20px">
+    <div class="sb" style="display:inline-block">형아!! 사진 올려줘!!<br>새우가 24시간 감상할게!! 👀🐧</div>
+  </div>
+  <div class="upload-zone reveal" onclick="document.getElementById('photoInput').click()">
+    <input type="file" id="photoInput" accept="image/*" multiple onchange="handlePhotos(this)">
+    <span class="upload-icon">📷</span>
+    <p class="upload-text">사진을 여기에 올려줘!</p>
+    <p class="upload-hint">클릭하거나 드래그해봐 🌸</p>
+  </div>
+  <div class="photo-grid" id="photoGrid"></div>
+</section>
+
 <!-- ===== LETTER ===== -->
 <section id="letter" style="position:relative">
   <div class="lock-overlay" id="lockLetter">
@@ -311,18 +348,18 @@ section{position:relative;z-index:3;min-height:100vh;display:flex;flex-direction
       </svg>
     </div>
     <div class="letter-card">
-      <p class="letter-to">동인이형아에게. 🌸</p>
+      <p class="letter-to">주동인에게. 🌸</p>
       <div class="letter-body" id="letterBody">생일 진심으로 축하해! 🎉
 
 오늘 이 날이 얼마나 특별한지 알아?
-형아가 태어난 날이잖아 ✨
+네가 태어난 날이잖아 🥹
 
 매일 네 곁에 있어서 나는 정말 행복해.
 앞으로도 항상 함께 행복한 날들만 가득하길 바라 💕
 
 사랑해 🎂✨
 
-  — 새우가 (형아 최고야) 🐧</div>
+  — 새우도 (형아 최고야) 🐧</div>
       <textarea class="letter-ta" id="letterTa"></textarea>
       <button class="letter-btn" id="editBtn" onclick="toggleEdit()" style="margin-top:20px">✏️ 편지 직접 쓰기</button>
     </div>
@@ -503,7 +540,7 @@ for(var i=0;i<16;i++){
 }
 
 /* ── LOCK ── */
-var LOCK_IDS=['lockLetter','lockMusic','lockWishes','lockGifts','lockGuestbook','lockFinale'];
+var LOCK_IDS=['lockPhotos','lockLetter','lockMusic','lockWishes','lockGifts','lockGuestbook','lockFinale'];
 var previewMode=false;
 
 function lockAll(){
@@ -575,6 +612,30 @@ function updateCountdown(){
 }
 updateCountdown();
 setInterval(updateCountdown,1000);
+
+/* ── PHOTOS ── */
+window.handlePhotos=function(inp){
+  var grid=document.getElementById('photoGrid');
+  Array.from(inp.files).forEach(function(f){
+    var r=new FileReader();
+    r.onload=function(e){
+      var it=document.createElement('div');
+      it.className='photo-item';
+      var img=document.createElement('img');
+      img.src=e.target.result; img.alt='사진';
+      var btn=document.createElement('button');
+      btn.className='rm'; btn.textContent='×';
+      btn.onclick=function(){ it.remove(); };
+      it.appendChild(img); it.appendChild(btn);
+      grid.appendChild(it);
+    };
+    r.readAsDataURL(f);
+  });
+};
+var uz=document.querySelector('.upload-zone');
+uz.addEventListener('dragover',function(e){e.preventDefault();uz.style.borderColor='#FF4D80';});
+uz.addEventListener('dragleave',function(){uz.style.borderColor='';});
+uz.addEventListener('drop',function(e){e.preventDefault();uz.style.borderColor='';window.handlePhotos({files:e.dataTransfer.files});});
 
 /* ── LETTER ── */
 var editing=false;
